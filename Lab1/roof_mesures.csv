@@ -1,0 +1,10 @@
+﻿Signal;Noise;Units;mesure
+1408;1463;MHz;Noise freq.
+11158;11213;MHz;signal freq
+-44,59;-60,14;dBm;Nominal
+-41,02;-55,64;dBm;Cable2
+-47,73;-63,17;dBm;2Cables
+-44,51;-59,96;dBm;Nominal
+-55,54;-55,6;dBm;T0
+-90,22;-89,37;dBm;S.A_alone
+-44,34;-59,72;dBm;Nominal
