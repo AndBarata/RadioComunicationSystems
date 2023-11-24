@@ -8,7 +8,7 @@ fprintf("\nStart of the program\n");
 
 
 load('data/MatLab_20231102.mat');  % Load the .mat file
-% Plot the full date
+%load('data/MatLab_20231122.mat'); % Plot the full date
 figure(1); plot(sinal.Date, sinal.Val, '.-', ruido.Date, ruido.Val, '.-'); title('Satalite Signal'); grid on;
 
 t_lost_signal = []; % Mark the timestamp where signal was loss
@@ -16,7 +16,7 @@ t_lost_signal = []; % Mark the timestamp where signal was loss
 fs = 1/20; % New sample every 20 seconds
 count = 0;
 % Plot moments where the channel might be compremised
-window_size = 800; % Corresponds to window_size/fs seconds -> 800/20 = 40 seconds
+window_size = 4;
 ignore_counter = 0;
 for i = 1:length(sinal.Date)
     if ignore_counter < window_size 
@@ -43,9 +43,9 @@ snr = sinal.Val - ruido.Val;
 
 snr_rain_figure = figure; 
 sp(1) = subplot(3,1,1); plot(sinal.Date, sinal.Val, '.-', ruido.Date, ruido.Val, '.-'); title('Signal vs Noise: blue -> signal | red -> noise'); xlabel("date"); ylabel("Magnitude (dB"); grid on;
-sp(2) = subplot(3,1,2); plot(sinal.Date, sinal.Val/max(sinal.Val), '.-', temp_and_rain.datetime, temp_and_rain.precip/max(temp_and_rain.precip), '.-'); title('Percipitation Data: blue -> signal | red -> precipitation'); xlabel("date"); ylabel("Magnitude Normalized"); grid on;
-sp(3) = subplot(3,1,3); plot(temp_and_rain.datetime, temp_and_rain.precip/max(temp_and_rain.precip), '.-', sinal.Date, snr, '-'); title('Rain vs SNR: blue -> rain | red -> snr | yellow -> signal loss'); grid on;
-yline(6, '-');
+sp(2) = subplot(3,1,2); plot(sinal.Date, sinal.Val/abs(max(sinal.Val))+2, '.-', temp_and_rain.datetime, temp_and_rain.precip/max(temp_and_rain.precip), '.-'); title('Percipitation Data: blue -> signal | red -> precipitation'); xlabel("date"); ylabel("Magnitude Normalized"); grid on;
+sp(3) = subplot(3,1,3); plot(sinal.Date, snr/max(snr), '-', temp_and_rain.datetime, temp_and_rain.precip/max(temp_and_rain.precip), '.-'); title('Rain vs SNR: blue -> rain | red -> snr | yellow -> signal loss'); grid on;
+%yline(6, '-');
 step = 0.1; % 
 ignore_counter = 0;
 for i = 1: length(t_lost_signal)
