@@ -10,7 +10,7 @@ fprintf("\nStart of the program\n");
 load('data/MatLab_20231102.mat');  % Load the .mat file
 load('data/MatLab_20231122.mat'); 
 sinal = [sinal; sinal2];
-ruido = [ruido; ruido2];
+ruido = [ruido ruido2];
 
 % Plot the full date 
 figure(1); plot(sinal.Date, sinal.Val, '.-', ruido.Date, ruido.Val, '.-'); title('Satalite Signal'); grid on;
