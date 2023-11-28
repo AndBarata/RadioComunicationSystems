@@ -81,4 +81,18 @@ d = datetime(t,'ConvertFrom','datenum');
 txt = 'Figures/snr_vs_percipitation_' + string(d) + '.png';
 %saveas(snr_rain_figure, txt);
 
+% Making all datetime values unique (for interpolation)
+[~, ~, unique_index] = unique(temp_and_rain.datetime);
+first_index = accumarray(unique_index, (1:numel(temp_and_rain.datetime)).', [], @min);
+dupe = ~ismember(1:numel(temp_and_rain.datetime), first_index);
+temp_and_rain.datetime(dupe) = temp_and_rain.datetime(dupe) + seconds(1);
+
+% Interpolation of rain data
+interv = temp_and_rain.datetime(1):minutes(1):temp_and_rain.datetime(end);
+interpol_rain = interp1(temp_and_rain.datetime, temp_and_rain.precip, interv, 'makima'); % Method used: Modified Akima
+interpol_rain_figure = figure;
+subplot (2,1,1); plot(temp_and_rain.datetime, temp_and_rain.precip/max(temp_and_rain.precip)); title('Original Data'); grid on;
+subplot (2,1,2); plot(interv, interpol_rain/max(interpol_rain)); title('Interpolated Data'); grid on;
+
+
 fprintf("End of program\n")
