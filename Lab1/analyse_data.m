@@ -64,7 +64,7 @@ for i = 1: length(t_lost_signal)
         xregion(sp(3), t_lost_signal(i)-step, t_lost_signal(i)+step, 'FaceColor', darK_yellow);
 end
 
-legend("Sinal", "rain"); draw now;
+legend("Sinal", "rain"); % draw now;
 %% Temperature influence plots
 %temp_data_time_resampled = resample(single(temp_and_rain.datetime), 60, 1);
 %temp_data_temp_resampled = resample(temp_and_rain.temp, 60, 1);
