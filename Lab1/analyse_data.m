@@ -94,22 +94,28 @@ interpol_rain_figure = figure;
 subplot (2,1,1); plot(temp_and_rain.datetime, temp_and_rain.precip/max(temp_and_rain.precip)); title('Original Data'); grid on;
 subplot (2,1,2); plot(interv, interpol_rain/max(interpol_rain)); title('Interpolated Data'); grid on;
 
-avg_interval = temp_and_rain.datetime(12:201);
-avg_val = [];
+date_interval = temp_and_rain.datetime(12:201);
 sinal_interval = sinal.Val(139:34338);
 ruido_interval = ruido.Val(139:34338);
+ruido_val = [];
 snr_interval = (sinal_interval - ruido_interval);
+snr_val = [];
 
-for i = 1:length(avg_interval)
+for i = 1:length(date_interval)
     check_val = i*180;
     loop_val = check_val-180+1;
     curr_hour = loop_val:check_val;
-    mean_val = mean(snr_interval(curr_hour));
-    avg_val = [avg_val, mean_val];
+    mean_snr_val = mean(snr_interval(curr_hour));
+    mean_ruido_val = mean(ruido_interval(curr_hour));
+    snr_val = [snr_val, mean_snr_val];
+    ruido_val = [ruido_val, mean_ruido_val];
 end
 
 snr_avg = figure;
-subplot(2,1,1); plot (sinal.Date, snr); grid on; title('0G');
-subplot(2,1,2); plot(avg_interval, avg_val); grid on; title('AVG');
+subplot(2,1,1); plot (sinal.Date, snr); grid on; title("0G SNR");
+subplot(2,1,2); plot(date_interval, snr_val); grid on; title("AVG SNR");
+ruido_avg = figure;
+subplot(2,1,1); plot (ruido.Date, ruido.Val); grid on; title("0G Noise");
+subplot(2,1,2); plot(date_interval, ruido_val); grid on; title("AVG Noise");
 
 fprintf("End of program\n")
