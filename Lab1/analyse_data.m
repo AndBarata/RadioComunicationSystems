@@ -94,5 +94,22 @@ interpol_rain_figure = figure;
 subplot (2,1,1); plot(temp_and_rain.datetime, temp_and_rain.precip/max(temp_and_rain.precip)); title('Original Data'); grid on;
 subplot (2,1,2); plot(interv, interpol_rain/max(interpol_rain)); title('Interpolated Data'); grid on;
 
+avg_interval = temp_and_rain.datetime(12:201);
+avg_val = [];
+sinal_interval = sinal.Val(139:34338);
+ruido_interval = ruido.Val(139:34338);
+snr_interval = (sinal_interval - ruido_interval);
+
+for i = 1:length(avg_interval)
+    check_val = i*180;
+    loop_val = check_val-180+1;
+    curr_hour = loop_val:check_val;
+    mean_val = mean(snr_interval(curr_hour));
+    avg_val = [avg_val, mean_val];
+end
+
+snr_avg = figure;
+subplot(2,1,1); plot (sinal.Date, snr); grid on; title('0G');
+subplot(2,1,2); plot(avg_interval, avg_val); grid on; title('AVG');
 
 fprintf("End of program\n")
