@@ -57,9 +57,9 @@ date_interval = temp_and_rain.datetime(12:201);
 %date_interval = rain_temp_06_22_nov.datetime(18:393);        %uncomment to analyse data from 06/11 to 22/11
 
 sinal_interval = sinal.Val(139:34338);
-%sinal_interval = sinal2.Val(10:67689);
+%sinal_interval = sinal2.Val(10:67689);        %uncomment to analyse data from 06/11 to 22/11
 sinal_val = [];
-ruido_interval = ruido.Val(139:34338);        %uncomment to analyse data from 06/11 to 22/11
+ruido_interval = ruido.Val(139:34338);
 %ruido_interval = ruido2.Val(10:67689);        %uncomment to analyse data from 06/11 to 22/11
 ruido_val = [];
 snr_interval = (sinal_interval - ruido_interval);
