@@ -13,8 +13,8 @@ load('data/MatLab_20231122.mat');
 %sinal = [sinal; sinal2];
 %ruido = [ruido; ruido2];
 
-sinal = sinal2;
-ruido = ruido2;
+%sinal = sinal2;        %uncomment to analyse data from 06/11 to 22/11
+%ruido = ruido2;        %uncomment to analyse data from 06/11 to 22/11
 
 % Plot the full date 
 figure(1); plot(sinal.Date, sinal.Val, '.-', ruido.Date, ruido.Val, '.-'); title('Satalite Signal'); grid on; legend("signal", "noise");
@@ -50,17 +50,17 @@ load('data/temp_and_rain_data.mat');  % Load the .mat file
 
 snr = sinal.Val - ruido.Val;
 %temp_and_rain = [temp_and_rain; rain_temp_06_22_nov];
-temp_and_rain = rain_temp_06_22_nov;
+%temp_and_rain = rain_temp_06_22_nov;        %uncomment to analyse data from 06/11 to 22/11
 
 
 date_interval = temp_and_rain.datetime(12:201);
-date_interval = rain_temp_06_22_nov.datetime(18:393);
+%date_interval = rain_temp_06_22_nov.datetime(18:393);        %uncomment to analyse data from 06/11 to 22/11
 
 sinal_interval = sinal.Val(139:34338);
-sinal_interval = sinal2.Val(10:67689);
+%sinal_interval = sinal2.Val(10:67689);
 sinal_val = [];
-ruido_interval = ruido.Val(139:34338);
-ruido_interval = ruido2.Val(10:67689);
+ruido_interval = ruido.Val(139:34338);        %uncomment to analyse data from 06/11 to 22/11
+%ruido_interval = ruido2.Val(10:67689);        %uncomment to analyse data from 06/11 to 22/11
 ruido_val = [];
 snr_interval = (sinal_interval - ruido_interval);
 snr_val = [];
