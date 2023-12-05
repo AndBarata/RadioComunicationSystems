@@ -95,7 +95,7 @@ legend("Sinal", "rain"); % draw now;
 %temp_data_time_resampled = resample(single(temp_and_rain.datetime), 60, 1);
 %temp_data_temp_resampled = resample(temp_and_rain.temp, 60, 1);
 temp_signal_figure = figure;
-plot(date_interval, -sinal_val/max(abs(sinal_val)), '.-', date_interval, -ruido_val/max(abs(ruido_val)), '.-' , temp_and_rain.datetime, temp_and_rain.temp/max(temp_and_rain.temp), '.-'); title('Influence of temperature in signal'); grid on; legend("signal", "noise", "Temperature");
+plot(date_interval, -sinal_val/max(abs(sinal_val)), '.-', date_interval, -ruido_val/max(abs(ruido_val)), '.-' , temp_and_rain.datetime, temp_and_rain.temp/max(temp_and_rain.temp), '.-'); title('Influence of temperature in signal'); grid on; legend("signal", "noise", "Temperature", 'Location', 'northwest');
 
 
 figure; plot(temp_and_rain.datetime, temp_and_rain.temp/max(temp_and_rain.temp), '.-', temp_and_rain.datetime, temp_and_rain.precip/max(temp_and_rain.precip), '.-'); title("Temperature and rain");
