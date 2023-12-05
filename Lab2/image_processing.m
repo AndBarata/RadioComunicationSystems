@@ -8,8 +8,8 @@ clc
 load CH_07_MoCo_5cm.mat
 
 % Plot original image
-figure; image(abs(ch(:,1:10:end))/1000); title("Raw data");
-
+figure; image(abs(ch(:,1:10:end))/100); title("Data after process"); colormap('gray'); axis("off");
+%saveas(gcf, 'raw_dataV1.png');
 %% Parameteres and importamt results
 % Bandwidth = 60 MHz
 % fs = 60 MHz (each sample 2.5 meters (horizontal))
@@ -29,19 +29,21 @@ d = sqrt(R.^2*ones(1,65536) + ones(1200,1)*x.^2); % Distance to object
 theta = atan2(ones(1200,1)*x, R*ones(1,65536)) * (180/pi); % beam angle of the antenna - pointing direction
 
 % Where did he got this? Why the values 40 and 1?
-A = sinc(theta/30) .* (abs(theta)<=40) .* (abs(theta)>=1); % Antenna Pattern
+A = sinc(theta/30) .* (abs(theta)<=90) .* (abs(theta)>=1); % Antenna Pattern
 
 % resises the image, adds zeros to left and right CH is now a 1200 by 65536
 CH = single([zeros(1200,(2^16-14000)/2) conj(ch) zeros(1200,(2^16-14002)/2)]); % Why do conj(ch)
-figure; image(abs(CH(:,:))/500); title("Raw data but resised"); % Why divid by 500? to reduce the amplite of the point, else would all be yellow
+figure; image(abs(CH(:,:))/500); title("Raw data but resised"); 
 
 S = A .* exp(-4j*pi/lambda*d); % SAR signal, sinal para correlacionar em azimute
 S = single(S);
 
 %% SAR processing gain
-figure; image(abs(ifft(conj(fft(fftshift(S,2), [], 2)).*fft(CH, [],2), [],2)) / 50000); title("After correlation") % Correlation of conjugated of S by CH, represents a correlation in time
+figure; image(abs(ifft(conj(fft(fftshift(S,2), [], 2)).*fft(CH, [],2), [],2)) / 5000); title("Azimuth Compression"); colormap('gray'); axis("off"); % Correlation of conjugated of S by CH, represents a correlation in time
+%saveas(gcf, 'data_corrV1.png');
 figure; image(resample(double(abs(ifft(conj(fft(fftshift(S,2), [], 2)).*fft(CH, [],2), [],2))'), 1, 25)' / 50000); title("After ressample 1:25") % Does the average of 25 points and groups it into 1 | Low pass filter
 figure; image(x, R, resample(double(abs(ifft(conj(fft(fftshift(S,2), [], 2)).*fft(CH, [],2), [],2))'), 1, 25)' / 50000); title("After resample 1:25 - corrected axis values"); colormap('gray'); % Same as before but with the correct axis values
+%saveas(gcf, 'low_passV1.png');
 
 %% Range Migration
 %figure; image(abs(CH) / 500); title("raw data: line are not perfectly
@@ -72,9 +74,10 @@ figure; image(abs(CHF)/20000); title(" Compensation of the hiperbole")
 
 %% Final Result
 % Final image, plot the correlated and resampled signal, but with the ridge regression compensation
-figure; image(x, R, resample(double(abs(ifft(conj(fft(fftshift(S,2), [], 2)).*fftshift(CHF(101:1300,:),2), [],2))'), 1, 25)' / 5000); title("Correlation + resample + ridge regression") %estamos a fazer a correlação com a linha horizontal (,2) mas na verdade esta linha é uma parábola
+figure; image(x, R, resample(double(abs(ifft(conj(fft(fftshift(S,2), [], 2)).*fftshift(CHF(101:1300,:),2), [],2))'), 1, 25)' / 7000); title("Correlation + resample + ridge regression") %estamos a fazer a correlação com a linha horizontal (,2) mas na verdade esta linha é uma parábola
 colormap('gray');
 
+%saveas(gcf, 'data_compensatedV1.png');
 
 
 
