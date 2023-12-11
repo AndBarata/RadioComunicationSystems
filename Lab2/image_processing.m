@@ -10,6 +10,7 @@ load CH_07_MoCo_5cm.mat
 % Plot original image
 figure; image(abs(ch(:,1:10:end))/100); title("Data after process"); colormap('gray'); axis("off");
 %saveas(gcf, 'raw_dataV1.png');
+
 %% Parameteres and importamt results
 % Bandwidth = 60 MHz
 % fs = 60 MHz (each sample 2.5 meters (horizontal))
@@ -39,16 +40,22 @@ S = A .* exp(-4j*pi/lambda*d); % SAR signal, sinal para correlacionar em azimute
 S = single(S);
 
 %% SAR processing gain
-figure; image(abs(ifft(conj(fft(fftshift(S,2), [], 2)).*fft(CH, [],2), [],2)) / 5000); title("Azimuth Compression"); colormap('gray'); axis("off"); % Correlation of conjugated of S by CH, represents a correlation in time
+% Azimuth compression
+azimuthCompression = abs(ifft(conj(fft(fftshift(S,2), [], 2)).*fft(CH, [],2), [],2)) / 5000;
+figure; image(azimuthCompression); title("Azimuth Compression"); colormap('gray'); axis("off"); % Correlation of conjugated of S by CH, represents a correlation in time
 %saveas(gcf, 'data_corrV1.png');
-figure; image(resample(double(abs(ifft(conj(fft(fftshift(S,2), [], 2)).*fft(CH, [],2), [],2))'), 1, 25)' / 50000); title("After ressample 1:25") % Does the average of 25 points and groups it into 1 | Low pass filter
-figure; image(x, R, resample(double(abs(ifft(conj(fft(fftshift(S,2), [], 2)).*fft(CH, [],2), [],2))'), 1, 25)' / 50000); title("After resample 1:25 - corrected axis values"); colormap('gray'); % Same as before but with the correct axis values
+
+% Azimuth Decimation
+azimuthDecimation = resample(double(abs(ifft(conj(fft(fftshift(S,2), [], 2)).*fft(CH, [],2), [],2))'), 1, 8)' / 5000;
+%figure; image(azimuthDecimation); title("After ressample 1:8") % Does the average of 25 points and groups it into 1 | Low pass filter
+
+figure; image(x, R, azimuthDecimation); title("After resample 8:1"); colormap('gray'); axis("off");% Same as before but with the correct axis values
 %saveas(gcf, 'low_passV1.png');
 
 %% Range Migration
 %figure; image(abs(CH) / 500); title("raw data: line are not perfectly
 %horizontal"); % Note that in raw data, the lines are not horizontal, we need to compensate that. It's am hiperbolic because as the plane move, the distance to the object increases
-figure; image(abs(fftshift(fft( CH, [],2), 2)) / 10000); title("FFT of raw data, but low frequencies in the middle"); % center of low frequencies that correspond to the plane on top of the object. Smate as before but with low freq in center
+figure; image(abs(fftshift(fft( CH, [],2), 2)) / 1000); title("FFT of raw data. Low frequencies in the middle"); colormap('gray'); axis("off"); % center of low frequencies that correspond to the plane on top of the object. Smate as before but with low freq in center
 
 % distorce the line line in order to make them straight lines, R varies
 % with an hiporbole, we want to make it staight by using an interpolation
@@ -56,7 +63,7 @@ figure; image(abs(fftshift(fft( CH, [],2), 2)) / 10000); title("FFT of raw data,
 w = 2*pi*(-32768:32767)/65536/0.05; % Frequency in space -> radiants per meter (AKA doppler?)
 
 CHF = fftshift(fft([zeros(100,65536); CH; zeros(400, 65536)], [], 2),2); % fft of raw data with low frequencies in center, resized bu adding zeros on top and bottom
-figure; image(abs(CHF)/20000); title("fft of raw data resized with low freq in middle");
+%figure; image(abs(CHF)/20000); title("fft of raw data resized with low freq in middle");
 
 % Initial sample value
 NN = round(1300./sqrt(1-(sol/2340e6*w/(4*pi)).^2)); % we have 1300 samples times 1/ sqrt(...) we want N samples
@@ -70,12 +77,12 @@ for k= 1:65536
 end
 
 % Now we can consider the lines to be straight when in fact they are hiperbolic
-figure; image(abs(CHF)/20000); title(" Compensation of the hiperbole")
+figure; image(abs(CHF)/7000); title("Raw data after range migration"); colormap('gray'); axis("off");
 
 %% Final Result
 % Final image, plot the correlated and resampled signal, but with the ridge regression compensation
-figure; image(x, R, resample(double(abs(ifft(conj(fft(fftshift(S,2), [], 2)).*fftshift(CHF(101:1300,:),2), [],2))'), 1, 25)' / 7000); title("Correlation + resample + ridge regression") %estamos a fazer a correlação com a linha horizontal (,2) mas na verdade esta linha é uma parábola
-colormap('gray');
+figure; image(x, R, resample(double(abs(ifft(conj(fft(fftshift(S,2), [], 2)).*fftshift(CHF(101:1300,:),2), [],2))'), 1, 25)' / 7000); title("Final Image") %estamos a fazer a correlação com a linha horizontal (,2) mas na verdade esta linha é uma parábola
+colormap('gray'); axis("off");
 
 %saveas(gcf, 'data_compensatedV1.png');
 
