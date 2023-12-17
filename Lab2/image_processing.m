@@ -9,7 +9,6 @@ load CH_07_MoCo_5cm.mat
 
 % Plot original image
 figure; image(abs(ch(:,1:10:end))/100); title("Data after process"); colormap('gray'); axis("off");
-%saveas(gcf, 'raw_dataV1.png');
 
 %% Parameteres and importamt results
 % Bandwidth = 60 MHz
@@ -29,28 +28,24 @@ x = (-32768:32767)*0.05; % Azimute resolution, samples separated by 5 cm
 d = sqrt(R.^2*ones(1,65536) + ones(1200,1)*x.^2); % Distance to object
 theta = atan2(ones(1200,1)*x, R*ones(1,65536)) * (180/pi); % beam angle of the antenna - pointing direction
 
-% Where did he got this? Why the values 40 and 1?
-A = sinc(theta/30) .* (abs(theta)<=90) .* (abs(theta)>=1); % Antenna Pattern
+
+A = sinc(theta/30) .* (abs(theta)<=30) .* (abs(theta)>=1); % Antenna Pattern
 
 % resises the image, adds zeros to left and right CH is now a 1200 by 65536
-CH = single([zeros(1200,(2^16-14000)/2) conj(ch) zeros(1200,(2^16-14002)/2)]); % Why do conj(ch)
+CH = single([zeros(1200,(2^16-14000)/2) conj(ch) zeros(1200,(2^16-14002)/2)]);
 figure; image(abs(CH(:,:))/500); title("Raw data but resised"); 
 
-S = A .* exp(-4j*pi/lambda*d); % SAR signal, sinal para correlacionar em azimute
+S = A .* exp(-4j*pi/lambda*d); % SAR signal
 S = single(S);
 
 %% SAR processing gain
 % Azimuth compression
 azimuthCompression = abs(ifft(conj(fft(fftshift(S,2), [], 2)).*fft(CH, [],2), [],2)) / 5000;
 figure; image(azimuthCompression); title("Azimuth Compression"); colormap('gray'); axis("off"); % Correlation of conjugated of S by CH, represents a correlation in time
-%saveas(gcf, 'data_corrV1.png');
 
 % Azimuth Decimation
 azimuthDecimation = resample(double(abs(ifft(conj(fft(fftshift(S,2), [], 2)).*fft(CH, [],2), [],2))'), 1, 8)' / 5000;
-%figure; image(azimuthDecimation); title("After ressample 1:8") % Does the average of 25 points and groups it into 1 | Low pass filter
-
 figure; image(x, R, azimuthDecimation); title("After resample 8:1"); colormap('gray'); axis("off");% Same as before but with the correct axis values
-%saveas(gcf, 'low_passV1.png');
 
 %% Range Migration
 %figure; image(abs(CH) / 500); title("raw data: line are not perfectly
@@ -83,10 +78,3 @@ figure; image(abs(CHF)/7000); title("Raw data after range migration"); colormap(
 % Final image, plot the correlated and resampled signal, but with the ridge regression compensation
 figure; image(x, R, resample(double(abs(ifft(conj(fft(fftshift(S,2), [], 2)).*fftshift(CHF(101:1300,:),2), [],2))'), 1, 25)' / 7000); title("Final Image") %estamos a fazer a correlação com a linha horizontal (,2) mas na verdade esta linha é uma parábola
 colormap('gray'); axis("off");
-
-%saveas(gcf, 'data_compensatedV1.png');
-
-
-
-
-
