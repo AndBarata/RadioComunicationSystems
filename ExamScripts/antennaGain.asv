@@ -1,7 +1,0 @@
-% e - efficiency
-% r - radius of the antenna
-% lambda - wave length
-function Again = antennaGain(e, r, lambda)
-
-    Again
-end
